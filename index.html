@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>計時器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    #countdown {
+      font-size: 3em;
+      font-weight: bold;
+      color: #222;
+      margin: 20px 0;
+    }
+
+    input[type="datetime-local"] {
+      padding: 8px;
+      font-size: 1em;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      margin: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<h1>計時器</h1>
+<div id="countdown">00:00:00</div>
+<input type="datetime-local" id="targetTime">
+<br>
+<button id="startBtn">開始</button>
+<button id="resetBtn">重置</button>
+
+<script>
+  let countdownInterval;
+  let targetTime;
+  const countdown = document.getElementById('countdown');
+  const startBtn = document.getElementById('startBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const targetInput = document.getElementById('targetTime');
+
+  function updateCountdown() {
+    const now = new Date();
+    const distance = targetTime - now;
+
+    if (distance <= 0) {
+      clearInterval(countdownInterval);
+      countdown.textContent = "00:00:00";
+      alert("時間到！");
+      startBtn.textContent = "開始";
+      return;
+    }
+
+    const hours = String(Math.floor((distance / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+    const minutes = String(Math.floor((distance / (1000 * 60)) % 60)).padStart(2, '0');
+    const seconds = String(Math.floor((distance / 1000) % 60)).padStart(2, '0');
+
+    countdown.textContent = `${hours}:${minutes}:${seconds}`;
+  }
+
+  startBtn.addEventListener('click', () => {
+    if (startBtn.textContent === "開始") {
+      if (!targetInput.value) {
+        alert("請先設定目標日期與時間！");
+        return;
+      }
+
+      targetTime = new Date(targetInput.value);
+
+      if (targetTime <= new Date()) {
+        alert("目標時間已過，請重新設定！");
+        return;
+      }
+
+      countdownInterval = setInterval(updateCountdown, 1000);
+      updateCountdown();
+      startBtn.textContent = "暫停";
+    } else if (startBtn.textContent === "暫停") {
+      clearInterval(countdownInterval);
+      startBtn.textContent = "繼續";
+    } else if (startBtn.textContent === "繼續") {
+      countdownInterval = setInterval(updateCountdown, 1000);
+      startBtn.textContent = "暫停";
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    clearInterval(countdownInterval);
+    countdown.textContent = "00:00:00";
+    targetInput.value = "";
+    startBtn.textContent = "開始";
+  });
+</script>
+</body>
+</html>
