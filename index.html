@@ -4,108 +4,124 @@
   <meta charset="UTF-8">
   <title>計時器</title>
   <style>
+    /* CSS 樣式開始 */
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
+      font-family: Arial, sans-serif; /* 設定網頁預設字體為 Arial 或 sans-serif */
+      text-align: center; /* 將 body 內的所有文字和內聯元素水平居中 */
+      background-color: #f4f4f4; /* 設定網頁背景顏色為淺灰色 */
+      margin: 0; /* 移除 body 的預設外邊距 */
+      padding: 20px; /* 設定 body 的內邊距為 20 像素 */
     }
 
     h1 {
-      font-size: 2.5em;
-      color: #333;
-      margin-bottom: 20px;
+      font-size: 2.5em; /* 設定標題文字大小為 2.5 倍的預設大小 */
+      color: #333; /* 設定標題文字顏色為深灰色 */
+      margin-bottom: 20px; /* 設定標題下方的外邊距為 20 像素 */
     }
 
     #countdown {
-      font-size: 3em;
-      font-weight: bold;
-      color: #222;
-      margin: 20px 0;
+      font-size: 3em; /* 設定倒數顯示文字大小為 3 倍的預設大小 */
+      font-weight: bold; /* 設定倒數顯示文字為粗體 */
+      color: #222; /* 設定倒數顯示文字顏色為很深的灰色 */
+      margin: 20px 0; /* 設定倒數顯示上下的外邊距為 20 像素，左右沒有外邊距 */
     }
 
     input[type="datetime-local"] {
-      padding: 8px;
-      font-size: 1em;
+      padding: 8px; /* 設定日期時間輸入框的內邊距為 8 像素 */
+      font-size: 1em; /* 設定日期時間輸入框的文字大小為預設大小 */
     }
 
     button {
-      padding: 10px 20px;
-      font-size: 1em;
-      margin: 5px;
-      cursor: pointer;
+      padding: 10px 20px; /* 設定按鈕的內邊距，上下 10 像素，左右 20 像素 */
+      font-size: 1em; /* 設定按鈕的文字大小為預設大小 */
+      margin: 5px; /* 設定按鈕周圍的外邊距為 5 像素 */
+      cursor: pointer; /* 當滑鼠懸停在按鈕上時，顯示手型游標 */
     }
+    /* CSS 樣式結束 */
   </style>
 </head>
 <body>
 <h1>計時器</h1>
-<div id="countdown">00:00:00</div>
-<input type="datetime-local" id="targetTime">
-<br>
-<button id="startBtn">開始</button>
-<button id="resetBtn">重置</button>
+<div id="countdown">00:00:00</div> <input type="datetime-local" id="targetTime"> <br> <button id="startBtn">開始</button> <button id="resetBtn">重置</button> <script>
+  // JavaScript 程式碼開始
 
-<script>
-  let countdownInterval;
-  let targetTime;
-  const countdown = document.getElementById('countdown');
-  const startBtn = document.getElementById('startBtn');
-  const resetBtn = document.getElementById('resetBtn');
-  const targetInput = document.getElementById('targetTime');
+  let countdownInterval; // 用於儲存 setInterval() 返回的 ID，以便稍後清除計時器
+  let targetTime; // 用於儲存使用者設定的目標日期和時間
 
+  // 獲取 HTML 元素
+  const countdown = document.getElementById('countdown'); // 獲取 ID 為 "countdown" 的 div 元素
+  const startBtn = document.getElementById('startBtn'); // 獲取 ID 為 "startBtn" 的 button 元素
+  const resetBtn = document.getElementById('resetBtn'); // 獲取 ID 為 "resetBtn" 的 button 元素
+  const targetInput = document.getElementById('targetTime'); // 獲取 ID 為 "targetTime" 的 input 元素
+
+  // 定義更新倒數計時的函數
   function updateCountdown() {
-    const now = new Date();
-    const distance = targetTime - now;
+    const now = new Date(); // 獲取當前時間
+    const distance = targetTime - now; // 計算目標時間與當前時間之間的毫秒差
 
+    // 如果時間差小於等於 0，表示時間已到
     if (distance <= 0) {
-      clearInterval(countdownInterval);
-      countdown.textContent = "00:00:00";
-      alert("時間到！");
-      startBtn.textContent = "開始";
-      return;
+      clearInterval(countdownInterval); // 清除計時器間隔，停止倒數
+      countdown.textContent = "00:00:00"; // 將倒數顯示重置為 "00:00:00"
+      alert("時間到！"); // 彈出 "時間到！" 的提示訊息
+      startBtn.textContent = "開始"; // 將開始按鈕的文字恢復為 "開始"
+      return; // 結束函數執行
     }
 
-    const hours = String(Math.floor((distance / (1000 * 60 * 60)) % 24)).padStart(2, '0');
-    const minutes = String(Math.floor((distance / (1000 * 60)) % 60)).padStart(2, '0');
-    const seconds = String(Math.floor((distance / 1000) % 60)).padStart(2, '0');
+    // 計算剩餘的小時、分鐘和秒數
+    const hours = String(Math.floor((distance / (1000 * 60 * 60)) % 24)).padStart(2, '0'); // 計算剩餘小時，並用 padStart 確保總是兩位數
+    const minutes = String(Math.floor((distance / (1000 * 60)) % 60)).padStart(2, '0'); // 計算剩餘分鐘，並用 padStart 確保總是兩位數
+    const seconds = String(Math.floor((distance / 1000) % 60)).padStart(2, '0'); // 計算剩餘秒數，並用 padStart 確保總是兩位數
 
+    // 更新倒數顯示的文字內容
     countdown.textContent = `${hours}:${minutes}:${seconds}`;
   }
 
+  // 為開始按鈕添加點擊事件監聽器
   startBtn.addEventListener('click', () => {
+    // 如果按鈕文字是 "開始"
     if (startBtn.textContent === "開始") {
+      // 如果目標時間輸入框沒有值
       if (!targetInput.value) {
-        alert("請先設定目標日期與時間！");
-        return;
+        alert("請先設定目標日期與時間！"); // 彈出提示訊息
+        return; // 結束事件處理函數的執行
       }
 
-      targetTime = new Date(targetInput.value);
+      targetTime = new Date(targetInput.value); // 將輸入框的值轉換為 Date 物件
 
+      // 如果目標時間早於或等於當前時間
       if (targetTime <= new Date()) {
-        alert("目標時間已過，請重新設定！");
-        return;
+        alert("目標時間已過，請重新設定！"); // 彈出提示訊息
+        return; // 結束事件處理函數的執行
       }
 
-
+      // 啟動計時器，每 1000 毫秒（1 秒）執行一次 updateCountdown 函數
       countdownInterval = setInterval(updateCountdown, 1000);
-      updateCountdown();
-      startBtn.textContent = "暫停";
-    } else if (startBtn.textContent === "暫停") {
-      clearInterval(countdownInterval);
-      startBtn.textContent = "繼續";
-    } else if (startBtn.textContent === "繼續") {
+      updateCountdown(); // 立即執行一次 updateCountdown 以顯示初始倒數
+      startBtn.textContent = "暫停"; // 將按鈕文字更改為 "暫停"
+    }
+    // 如果按鈕文字是 "暫停"
+    else if (startBtn.textContent === "暫停") {
+      clearInterval(countdownInterval); // 清除計時器間隔，暫停倒數
+      startBtn.textContent = "繼續"; // 將按鈕文字更改為 "繼續"
+    }
+    // 如果按鈕文字是 "繼續"
+    else if (startBtn.textContent === "繼續") {
+      // 重新啟動計時器
       countdownInterval = setInterval(updateCountdown, 1000);
-      startBtn.textContent = "暫停";
+      startBtn.textContent = "暫停"; // 將按鈕文字更改回 "暫停"
     }
   });
 
+  // 為重置按鈕添加點擊事件監聽器
   resetBtn.addEventListener('click', () => {
-    clearInterval(countdownInterval);
-    countdown.textContent = "00:00:00";
-    targetInput.value = "";
-    startBtn.textContent = "開始";
+    clearInterval(countdownInterval); // 清除計時器間隔，停止倒數
+    countdown.textContent = "00:00:00"; // 將倒數顯示重置為 "00:00:00"
+    targetInput.value = ""; // 清空目標時間輸入框的值
+    startBtn.textContent = "開始"; // 將開始按鈕的文字恢復為 "開始"
   });
+
+  // JavaScript 程式碼結束
 </script>
 </body>
 </html>
